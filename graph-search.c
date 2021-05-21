@@ -17,14 +17,17 @@ typedef struct node {
 	int vertex;
 	struct node* link;
 } Node;
-
+#define FALSE 0
+#define TRUE 1
+int visited[10]={0,};//DFS에서 방문 됐는지 확인하기 위한 배열 선언
 Node graph[10]; //그래프 해드 노드들을 전역변수로 선언
 void InitializeGraph();  //그래프 초기화
 void freeGraph();//그래프 할당해제
 void freeNode(Node* ptr);//그래프 해드노드들에 연결된 리스트들 모두 할당해제
 void InsertVertex(int vertex); //Vertex 입력
 int InsertEdge(int FirstVertex, int SecondVertex); //두 vertex사이에 edge입력
-void DepthFirstSearch(int v);
+void DepthFirstSearch(int v);	//그래프의 정점v에서 시작하는 깊이 우선 탐색
+void initializeDFS();
 void BreathFirstSearch(int v);
 void printGraph();
 
@@ -39,6 +42,7 @@ int main()
 	}
 	char command;
 	int vertex;
+	int v;
 	int FirstVertex, SecondVertex;
 	do {
 		printf("\n\n");
@@ -76,7 +80,10 @@ int main()
 			InsertEdge(FirstVertex, SecondVertex);
 			break;
 		case 'd': case 'D':
-			//DepthFirstSearch();
+			printf("Vertex to start = ");
+			scanf("%d",&v);
+			DepthFirstSearch(v);
+			initializeDFS();
 			break;
 		case 'b': case 'B':
 			//BreathFirstSearch();
@@ -184,5 +191,24 @@ int InsertEdge(int FirstVertex, int SecondVertex)
 	else
 	{
 		printf("cannot add edge\n");
+	}
+}
+
+void DepthFirstSearch(int v)
+{
+	Node *ptr;
+	visited[v]= TRUE;
+	printf("%5d",v);
+	for(ptr=&graph[v];ptr!=NULL;ptr=ptr->link)
+	{
+		if(!visited[ptr->vertex])
+			DepthFirstSearch(ptr->vertex);
+	}
+}
+void initializeDFS()
+{
+	for(int i=0;i<10;i++)
+	{
+		visited[i]=FALSE;
 	}
 }
