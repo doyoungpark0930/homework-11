@@ -85,7 +85,7 @@ int main()
 			InsertEdge(FirstVertex, SecondVertex);
 			break;
 		case 'd': case 'D':
-			printf("Vertex to start = ");
+			printf("Vertex to start = "); //작은 원소부터 시작하고 싶다면 그 작은 원소를 삽입하면 된다
 			scanf("%d",&v);
 			DepthFirstSearch(v);
 			initializeVisited();
@@ -129,7 +129,7 @@ void freeGraph()
 	}
 }
 
-void freeNode(Node* ptr)
+void freeNode(Node* ptr) //recursive방식으로 할당해제
 {
 	if (ptr->link)
 	{
@@ -190,6 +190,7 @@ int InsertEdge(int FirstVertex, int SecondVertex)
 		ptr = &graph[SecondVertex];
 		while (ptr->link) //graph[SecondVertex]의 마지막 링크를 가리키도록
 		{
+			//두 vertex사이에 edge존재를 확인해야하는데 이미 위의 반복문에서 확인이 됨으로 여기서는 확인할 필요가 없다
 			ptr = ptr->link;
 		}
 		ptr->link = (Node*)malloc(sizeof(Node));
@@ -202,7 +203,7 @@ int InsertEdge(int FirstVertex, int SecondVertex)
 	}
 }
 
-void DepthFirstSearch(int v)
+void DepthFirstSearch(int v)	//깊이 우선 탐색, recursive방식
 {
 	Node *ptr;
 	visited[v]= TRUE;
@@ -221,17 +222,17 @@ void initializeVisited()
 	}
 }
 
-void BreathFirstSearch(int v)	//너비 우선 탐색
+void BreathFirstSearch(int v)	//너비 우선 탐색,iterative 방식
 {
 	Node *ptr;
 	printf("%5d",v);
 	visited[v]=TRUE;
 	addq(v);
 
-	while(!(front==rear))	//큐가 비어있지 않다면
+	while(!(front==rear))	//큐가 비어있지 않다면 반복
 	{
 		v=deleteq();
-		for(ptr=&graph[v];ptr;ptr=ptr->link) //recursive방식이 아니다
+		for(ptr=&graph[v];ptr;ptr=ptr->link) 
 			if(!visited[ptr->vertex])
 			{
 				printf("%5d",ptr->vertex);
@@ -243,7 +244,7 @@ void BreathFirstSearch(int v)	//너비 우선 탐색
 
 int addq(int v)	//큐 요소추가
 {
-	if(rear==9&&front==-1) //예외사항 처리
+	if(rear==9&&front==-1) //예외사항 처리,delete된거 하나도 없이 계속 addq만 했을때 
 	{
 		printf("Queue is full\n");
 		return 0;
