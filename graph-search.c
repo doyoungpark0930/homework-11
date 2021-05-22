@@ -13,10 +13,13 @@
 #include <string.h>
 #define _CRT_SECURE_NO_WARNINGS
 
-typedef struct node {
+typedef struct node {	//노드 구조체 선언
 	int vertex;
 	struct node* link;
 } Node;
+int Queue[10]; //원형 큐 배열로 선언
+int front =-1;
+int rear=-1;
 #define FALSE 0
 #define TRUE 1
 int visited[10]={0,};//DFS에서 방문 됐는지 확인하기 위한 배열 선언
@@ -26,10 +29,12 @@ void freeGraph();//그래프 할당해제
 void freeNode(Node* ptr);//그래프 해드노드들에 연결된 리스트들 모두 할당해제
 void InsertVertex(int vertex); //Vertex 입력
 int InsertEdge(int FirstVertex, int SecondVertex); //두 vertex사이에 edge입력
-void DepthFirstSearch(int v);	//그래프의 정점v에서 시작하는 깊이 우선 탐색
-void initializeDFS();
-void BreathFirstSearch(int v);
-void printGraph();
+void DepthFirstSearch(int v);	//그래프의 정점 v에서 시작하는 깊이 우선 탐색
+void initializeVisited(); //visited배열 FALSE로 모두 초기화
+void BreathFirstSearch(int v); //그래프의 정점 v에서너비 우선 탐색
+void printGraph();//그래프 출력
+int addq(int v); //큐 요소 추가
+int deleteq();	//큐 요소 삭제 후 ,삭제된 값 반환
 
 
 int main()
@@ -83,10 +88,13 @@ int main()
 			printf("Vertex to start = ");
 			scanf("%d",&v);
 			DepthFirstSearch(v);
-			initializeDFS();
+			initializeVisited();
 			break;
 		case 'b': case 'B':
-			//BreathFirstSearch();
+			printf("Vertex to start = ");
+			scanf("%d",&v);
+			BreathFirstSearch(v);
+			initializeVisited();
 			break;
 		case 'p': case 'P':
 			printGraph();
@@ -162,7 +170,7 @@ void printGraph()
 
 int InsertEdge(int FirstVertex, int SecondVertex)
 {
-	if (graph[FirstVertex].vertex == FirstVertex && graph[SecondVertex].vertex == SecondVertex) //두 vertex들이 모두 존재한다면
+	if (graph[FirstVertex].vertex == FirstVertex && graph[SecondVertex].vertex == SecondVertex && FirstVertex!=SecondVertex) //두 vertex들이 모두 존재한다면,그리고 vertex끼리 서로달라야함
 	{
 		Node* ptr;
 		ptr = &graph[FirstVertex];
@@ -205,10 +213,57 @@ void DepthFirstSearch(int v)
 			DepthFirstSearch(ptr->vertex);
 	}
 }
-void initializeDFS()
+void initializeVisited()
 {
 	for(int i=0;i<10;i++)
 	{
 		visited[i]=FALSE;
 	}
+}
+
+void BreathFirstSearch(int v)	//너비 우선 탐색
+{
+	Node *ptr;
+	printf("%5d",v);
+	visited[v]=TRUE;
+	addq(v);
+
+	while(!(front==rear))	//큐가 비어있지 않다면
+	{
+		v=deleteq();
+		for(ptr=&graph[v];ptr;ptr=ptr->link) //recursive방식이 아니다
+			if(!visited[ptr->vertex])
+			{
+				printf("%5d",ptr->vertex);
+				addq(ptr->vertex);
+				visited[ptr->vertex]=TRUE;
+			}
+	}
+}
+
+int addq(int v)	//큐 요소추가
+{
+	if(rear==9&&front==-1) //예외사항 처리
+	{
+		printf("Queue is full\n");
+		return 0;
+	}
+	rear=(rear+1)%10;
+	if(front==rear)
+		printf("Queue is full\n");
+	else
+		Queue[rear]=v;
+}
+
+int deleteq()	//큐 요소 삭제
+{
+	if(front==rear)
+		printf("Queue is empty\n");
+	else
+	{
+		front=(front+1)%10;
+		return Queue[front];
+	}
+
+	
 }
